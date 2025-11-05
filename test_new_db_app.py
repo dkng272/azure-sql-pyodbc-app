@@ -12,6 +12,11 @@ ODBC_STRING = os.getenv("AZURE_SQL_ODBC")
 st.set_page_config(page_title="Azure SQL Connectivity Test", layout="centered")
 st.title("Azure SQL — SQLAlchemy + pyodbc test")
 
+st.markdown("""
+This is the **SQLAlchemy method** with connection pooling and advanced features.
+For a simpler approach, check the **Direct PyODBC** page in the sidebar.
+""")
+
 if not ODBC_STRING:
     st.error("❌ ODBC connection string not found in .env (key: AZURE_SQL_ODBC)")
     st.stop()
