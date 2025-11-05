@@ -1,6 +1,7 @@
 import streamlit as st
 import pyodbc
 import pandas as pd
+import time
 
 st.set_page_config(page_title="Direct PyODBC Test", layout="centered")
 st.title("Azure SQL — Direct pyodbc Connection")
@@ -41,10 +42,13 @@ conn = init_connection(ODBC_STRING)
 st.subheader("1) Connectivity check")
 if st.button("Test connection"):
     try:
+        start_time = time.time()
         with conn.cursor() as cur:
             cur.execute("SELECT @@VERSION AS version")
             row = cur.fetchone()
-        st.success("✅ Connected successfully!")
+        elapsed_time = time.time() - start_time
+
+        st.success(f"✅ Connected successfully! ({elapsed_time:.3f}s)")
         st.code(row[0], language="text")
     except Exception as e:
         st.error("Connection failed.")
@@ -67,8 +71,16 @@ def run_query(q: str):
 
 if run:
     try:
+        start_time = time.time()
         df = run_query(query)
-        st.write(f"Rows returned: {len(df)}")
+        elapsed_time = time.time() - start_time
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric("Rows returned", len(df))
+        with col2:
+            st.metric("Query time", f"{elapsed_time:.3f}s")
+
         st.dataframe(df, use_container_width=True)
     except Exception as e:
         st.error("Query failed.")
